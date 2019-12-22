@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { darken } from 'polished';
 
 export const Wrapper = styled.div`
   background: #ee4d64;
@@ -88,6 +89,10 @@ export const Content = styled.div`
       height: 44px;
       border-radius: 4px;
       background: #ee4d64;
+
+      &:hover {
+        background: ${darken(0.03, '#ee4d64')};
+      }
 
       span {
         font: 'Roboto-Regular', sans-serif;
