@@ -78,7 +78,7 @@ export const Profile = styled.div`
       font-size: 14px;
     }
 
-    a {
+    button {
       display: block;
       margin-top: 4px;
       font-size: 14px;

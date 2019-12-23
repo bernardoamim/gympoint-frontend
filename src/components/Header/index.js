@@ -1,12 +1,19 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { signOut } from '~/store/modules/auth/actions';
 import { Container, Content, NavContainer, Profile } from './styles';
 import leftdb from '~/assets/Dumbbell@3x/leftDb@3x.png';
 import rightdb from '~/assets/Dumbbell@3x/rightDb@3x.png';
 
 export default function Header() {
+  const dispatch = useDispatch();
   const user = useSelector(state => state.auth.user);
+
+  function handleSignOut() {
+    dispatch(signOut());
+  }
+
   return (
     <Container>
       <Content>
@@ -27,7 +34,9 @@ export default function Header() {
           <Profile>
             <div>
               <strong>{user.name}</strong>
-              <Link to="/profile">sair do sistema</Link>
+              <button type="button" onClick={handleSignOut}>
+                Sair do GoBarber
+              </button>
             </div>
           </Profile>
         </aside>
