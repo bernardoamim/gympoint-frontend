@@ -2,8 +2,8 @@ import React from 'react';
 import * as Yup from 'yup';
 import { Form, Input } from '@rocketseat/unform';
 import { useDispatch, useSelector } from 'react-redux';
-import leftdb from '~/assets/Dumbbell@3x/leftDb@3x.png';
-import rightdb from '~/assets/Dumbbell@3x/rightDb@3x.png';
+import leftdb from '~/assets/Dumbbell@3x/leftdb@3x.png';
+import rightdb from '~/assets/Dumbbell@3x/rightdb@3x.png';
 import { signInRequest } from '~/store/modules/auth/actions';
 
 const schema = Yup.object().shape({
@@ -18,15 +18,14 @@ export default function SignIn() {
   const loading = useSelector(state => state.auth.loading);
 
   function handleSubmit({ email, password }) {
-    console.tron.log(email, password);
     dispatch(signInRequest(email, password));
   }
 
   return (
     <>
       <div>
-        <img src={leftdb} leftDb alt="" />
-        <img src={rightdb} alt="" />
+        <img src={leftdb} alt="left-dumbbell" />
+        <img src={rightdb} alt="right-dumbbell" />
       </div>
       <strong>GYMPOINT</strong>
       <Form schema={schema} onSubmit={handleSubmit}>

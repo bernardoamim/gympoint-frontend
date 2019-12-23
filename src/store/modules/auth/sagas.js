@@ -12,7 +12,7 @@ export function* signIn({ payload }) {
       email,
       password,
     });
-    console.tron.log('aqui', response.data);
+
     const { token, user } = response.data;
 
     api.defaults.headers.Authorization = `Bearer ${token}`;

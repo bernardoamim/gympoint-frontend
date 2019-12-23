@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { NavLink } from 'react-router-dom';
 
 export const Container = styled.div`
   background-color: #fff;
@@ -53,7 +54,7 @@ export const NavContainer = styled.div`
   justify-content: flex-start;
   font-weight: 500;
 
-  a {
+  /* a {
     color: #999;
     padding: 0 10px;
     font-size: 15px;
@@ -61,7 +62,13 @@ export const NavContainer = styled.div`
     &.active {
       color: #444;
     }
-  }
+  } */
+`;
+
+export const NavLinkElm = styled(NavLink)`
+  padding: 0 10px;
+  font-size: 15px;
+  color: ${props => (props.active ? '#444' : '#999')};
 `;
 
 export const Profile = styled.div`
@@ -83,6 +90,7 @@ export const Profile = styled.div`
       margin-top: 4px;
       font-size: 14px;
       color: #de3b3b;
+      border: none;
     }
   }
 
