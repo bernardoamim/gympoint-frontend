@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
+import { MdDone } from 'react-icons/md';
 import { Form, Input } from '@rocketseat/unform';
 import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import { Container } from './styles';
+import history from '~/services/history';
 import BackButton from '~/components/Buttons/BackButton';
-import SaveButton from '~/components/Buttons/SaveButton';
+import SubmitButton from '~/components/Buttons/SubmitButton';
 import { updateSubjectRequest } from '~/store/modules/subject/actions';
-import * as StudentActions from '~/store/modules/student/actions';
+import { createStudentRequest } from '~/store/modules/student/actions';
 
 const schema = Yup.object().shape({
   name: Yup.string().required('*Insira o nome do aluno'),
@@ -18,7 +20,7 @@ const schema = Yup.object().shape({
     .positive('*Idade deve ser maior que zero')
     .required('*Campo obrigatório'),
   weight: Yup.number()
-    .typeError('*Insira uma peso válido')
+    .typeError('*Insira um peso válido')
     .positive('*Peso deve ser maior que zero')
     .required('*Campo obrigatório'),
   height: Yup.number()
@@ -32,10 +34,15 @@ export default function NewStudent() {
 
   useEffect(() => {
     dispatch(updateSubjectRequest('student'));
-  });
+  }, []); //eslint-disable-line
 
-  function handleSubmit(data) {
-    dispatch(StudentActions.createStudentRequest(data));
+  function handleSubmit(data, { resetForm }) {
+    dispatch(createStudentRequest(data));
+    resetForm();
+  }
+
+  function handleBack() {
+    history.push('/students');
   }
 
   return (
@@ -44,8 +51,11 @@ export default function NewStudent() {
         <header>
           <strong>Cadastro de aluno</strong>
           <aside>
-            <BackButton />
-            <SaveButton />
+            <BackButton clickFunc={handleBack} />
+            <SubmitButton>
+              <MdDone color="#fff" size={20} />
+              <span>Salvar</span>
+            </SubmitButton>
           </aside>
         </header>
         <div>

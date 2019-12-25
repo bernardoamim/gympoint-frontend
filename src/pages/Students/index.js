@@ -1,26 +1,24 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { updateSubjectRequest } from '~/store/modules/subject/actions';
 import { Container } from './styles';
 import BackButton from '~/components/Buttons/BackButton';
-import SaveButton from '~/components/Buttons/SaveButton';
+import SubmitButton from '~/components/Buttons/SubmitButton';
 
 export default function Students() {
   const dispatch = useDispatch();
-  const subject = useSelector(state => state.subject.subject);
-  console.tron.log(subject);
+
   useEffect(() => {
-    async function updateSubject() {
-      dispatch(updateSubjectRequest('student'));
-    }
-    updateSubject();
-  });
+    dispatch(updateSubjectRequest('student'));
+  }, []); //eslint-disable-line
 
   return (
     <Container>
       <header>
         <BackButton />
-        <SaveButton />
+        <SubmitButton>
+          <span>Cadastrar</span>
+        </SubmitButton>
       </header>
     </Container>
   );

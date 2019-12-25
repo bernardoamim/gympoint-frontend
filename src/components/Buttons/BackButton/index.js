@@ -1,12 +1,21 @@
 import React from 'react';
 import { MdKeyboardArrowLeft } from 'react-icons/md';
-import { SecondaryButton } from '../styles';
+import PropTypes from 'prop-types';
+import { Button } from './styles';
 
-export default function BackButton() {
+export default function BackButton({ clickFunc }) {
   return (
-    <SecondaryButton>
+    <Button onClick={clickFunc}>
       <MdKeyboardArrowLeft size={20} color="#fff" />
       <span>Voltar</span>
-    </SecondaryButton>
+    </Button>
   );
 }
+
+BackButton.propTypes = {
+  clickFunc: PropTypes.func,
+};
+
+BackButton.defaultProps = {
+  clickFunc() {},
+};

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import MdKeyboardArrowDown from '~/assets/MdKeyboardArrowDown.svg';
 
 export const Container = styled.div`
   display: flex;
@@ -47,18 +48,73 @@ export const Container = styled.div`
         line-height: 16px;
       }
 
-      input {
+      svg {
+        background-color: #ccc;
+        color: #ccc;
+      }
+
+      input,
+      select {
         height: 44px;
         padding: 0 15px;
         border-radius: 4px;
         border: 1px solid #ddd;
         color: #999;
+        background-color: #fff;
         font: 'Roboto-Regular';
         font-weight: 300;
         line-height: 19px;
         letter-spacing: 2;
         font-size: 16px;
         margin-bottom: 20px;
+
+        &:disabled {
+          background-color: #f5f5f5;
+        }
+      }
+
+      option {
+        background: '#ccc';
+        height: 44px;
+
+        &:hover {
+          background: #ccc;
+        }
+      }
+
+      select,
+      [type='date']:not(:disabled),
+      [type='date']:not(:disabled):hover {
+        appearance: none;
+        background-image: url(${MdKeyboardArrowDown});
+        background-repeat: no-repeat;
+        background-position: right 0.7em top 50%, 0 0;
+      }
+
+      [type='date']::-webkit-calendar-picker-indicator {
+        opacity: 0;
+
+        &:hover {
+          opacity: 0;
+        }
+      }
+
+      [type='date']::-webkit-inner-spin-button {
+        display: none;
+      }
+
+      .react-datepicker-wrapper {
+        width: 100%;
+        padding: 0;
+        margin: 0;
+
+        div:first-child {
+          padding: 0;
+        }
+
+        &:read-only {
+          background-color: #f5f5f5;
+        }
       }
 
       span {
@@ -77,7 +133,7 @@ export const Container = styled.div`
 
         > div {
           flex-direction: column;
-          width: 33%;
+          width: 25%;
           padding: 0;
 
           &:not(:last-of-type) {

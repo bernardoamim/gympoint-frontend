@@ -31,12 +31,30 @@ export default function Header() {
         </nav>
 
         <NavContainer>
-          <NavLinkElm active={subject === 'student'} to="/home">
+          <NavLinkElm
+            active={subject === 'student' ? 'true' : undefined}
+            to="/home"
+          >
             ALUNOS
           </NavLinkElm>
-          <NavLinkElm to="/plans">PLANOS</NavLinkElm>
-          <NavLinkElm to="/inscriptions">MATRÍCULAS</NavLinkElm>
-          <NavLinkElm to="/orders">PEDIDOS DE AUXÍLIO</NavLinkElm>
+          <NavLinkElm
+            active={subject === 'plan' ? 'true' : undefined}
+            to="/plans"
+          >
+            PLANOS
+          </NavLinkElm>
+          <NavLinkElm
+            active={subject === 'inscription' ? 'true' : undefined}
+            to="/inscriptions"
+          >
+            MATRÍCULAS
+          </NavLinkElm>
+          <NavLinkElm
+            active={subject === 'order' ? 'true' : undefined}
+            to="/orders"
+          >
+            PEDIDOS DE AUXÍLIO
+          </NavLinkElm>
         </NavContainer>
 
         <aside>

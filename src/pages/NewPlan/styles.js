@@ -59,6 +59,10 @@ export const Container = styled.div`
         letter-spacing: 2;
         font-size: 16px;
         margin-bottom: 20px;
+
+        &:read-only {
+          background-color: #f5f5f5;
+        }
       }
 
       span {
