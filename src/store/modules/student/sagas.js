@@ -34,11 +34,11 @@ export function* updateStudent({ payload }) {
 
     const response = yield call(api.put, `students/${payload.id}`, student);
 
-    toast.success('Cadastro alterado com sucesso!');
+    toast.success('Aluno alterado com sucesso!');
 
     yield put(updateStudentSuccess(response.data));
   } catch (error) {
-    toast.error('Erro ao alterar cadastro, verifique os dados');
+    toast.error('Erro ao alterar dados do aluno, verifique os dados');
     yield put(updateStudentFailure());
   }
 }

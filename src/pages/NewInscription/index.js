@@ -100,7 +100,7 @@ export default function NewInscription() {
           <strong>Cadastro de matrícula</strong>
           <aside>
             <BackButton clickFunc={handleGoBack} />
-            <SubmitButton type="submit">
+            <SubmitButton>
               <MdDone color="#fff" size={20} />
               <span>Salvar</span>
             </SubmitButton>
