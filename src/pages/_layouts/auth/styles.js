@@ -84,17 +84,25 @@ export const Content = styled.div`
       }
     }
 
+    span {
+      color: #4d85ee;
+      font-size: 12px;
+      margin: -10px 0 10px 10px;
+      align-self: flex-start;
+    }
+
     button {
       border: none;
       height: 44px;
       border-radius: 4px;
       background: #ee4d64;
+      transition: background 0.2s;
 
       &:hover {
         background: ${darken(0.03, '#ee4d64')};
       }
 
-      span {
+      > span {
         font: 'Roboto-Regular', sans-serif;
         font-size: 16px;
         line-height: 19px;
