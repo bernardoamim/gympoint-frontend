@@ -38,7 +38,7 @@ export function* updateInscription({ payload }) {
       inscription
     );
 
-    toast.success('matrícula alterada com sucesso!');
+    toast.success('Matrícula alterada com sucesso!');
 
     yield put(updateInscriptionSuccess(response.data));
   } catch (error) {

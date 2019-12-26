@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Form, Input } from '@rocketseat/unform';
 import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
+import { formatPrice } from '~/util/format';
 import api from '~/services/api';
 import { Container } from './styles';
 import history from '~/services/history';
@@ -26,7 +27,6 @@ const schema = Yup.object().shape({
 
 export default function EditPlan({ match }) {
   const dispatch = useDispatch();
-
   const [plan, setPlan] = useState({});
   const [total, setTotal] = useState(0);
 
@@ -53,7 +53,7 @@ export default function EditPlan({ match }) {
 
   useMemo(() => {
     if (plan.price && plan.duration) {
-      setTotal(plan.price * plan.duration);
+      setTotal(formatPrice(plan.price * plan.duration));
     }
   }, [plan.price, plan.duration]);
 
@@ -88,17 +88,15 @@ export default function EditPlan({ match }) {
               <Input
                 name="price"
                 onChange={e => setPlan({ ...plan, price: e.target.value })}
-                type="number"
-                placeholder=""
-                step="0.01"
+                type="text"
               />
             </div>
             <div>
               <p>PREÇO TOTAL</p>
               <Input
                 name="total"
-                value={total}
-                type="number"
+                value={total || 'R$ 0,00'}
+                type="text"
                 readOnly
                 disabled
               />

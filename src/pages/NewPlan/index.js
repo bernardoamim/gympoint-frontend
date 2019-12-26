@@ -4,6 +4,7 @@ import { Form, Input } from '@rocketseat/unform';
 import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import { Container } from './styles';
+import { formatPrice } from '~/util/format';
 import history from '~/services/history';
 import BackButton from '~/components/Buttons/BackButton';
 import SubmitButton from '~/components/Buttons/SubmitButton';
@@ -42,7 +43,7 @@ export default function NewPlan() {
   }
 
   useMemo(() => {
-    setTotal(price * duration);
+    setTotal(formatPrice(price * duration));
   }, [price, duration]);
 
   return (
@@ -60,7 +61,7 @@ export default function NewPlan() {
         </header>
         <div>
           <p>TÍTULO DO PLANO</p>
-          <Input name="title" type="text" placeholder="" />
+          <Input name="title" type="text" placeholder="Título do plano" />
           <footer>
             <div>
               <p>DURAÇÃO (em meses)</p>
@@ -87,10 +88,10 @@ export default function NewPlan() {
               <p>PREÇO TOTAL</p>
               <Input
                 name="total"
-                value={total}
-                type="number"
-                readOnly
+                value={total || 'R$ 0,00'}
+                type="text"
                 disabled
+                readOnly
               />
             </div>
           </footer>

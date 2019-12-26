@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { MdDone } from 'react-icons/md';
-import { addMonths, startOfDay, startOfToday } from 'date-fns';
+import { addMonths, startOfToday } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Form, Input, Select } from '@rocketseat/unform';
-import DatePicker from 'react-datepicker';
 import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
+import DatePicker from '~/components/DatePicker';
 import { formatPrice } from '~/util/format';
 import { Container } from './styles';
 import history from '~/services/history';
@@ -76,12 +76,9 @@ export default function NewInscription() {
   }, [plan_id, start_date]); //eslint-disable-line
 
   function handleSubmit(data, { resetForm }) {
+    console.tron.log(data);
     dispatch(createInscriptionRequest(data));
     resetForm();
-  }
-
-  function handleStartDate(e) {
-    setStartDate(startOfDay(new Date(e.target.value)));
   }
 
   function handleGoBack() {
@@ -109,7 +106,7 @@ export default function NewInscription() {
             </SubmitButton>
           </aside>
         </header>
-        <div>
+        <article>
           <p>ALUNO</p>
           <Select
             placeholder="Buscar aluno"
@@ -117,7 +114,7 @@ export default function NewInscription() {
             options={studentsOptions}
           />
           <footer>
-            <div>
+            <span>
               <p>PLANO</p>
               <Select
                 name="plan_id"
@@ -125,16 +122,18 @@ export default function NewInscription() {
                 placeholder="Selecione o plano"
                 onChange={e => handleOptionChange(e)}
               />
-            </div>
-            <div>
+            </span>
+            <span>
               <p>DATA DE INÍCIO</p>
-              <Input
+              <DatePicker
                 name="start_date"
-                type="date"
-                onChange={e => handleStartDate(e)}
+                locale={pt}
+                dateFormat="P"
+                selected={start_date}
+                onChange={date => setStartDate(date)}
               />
-            </div>
-            <div>
+            </span>
+            <span>
               <p>DATA DE TÉRMINO</p>
               <DatePicker
                 name="end_date"
@@ -143,8 +142,8 @@ export default function NewInscription() {
                 selected={end_date}
                 disabled
               />
-            </div>
-            <div>
+            </span>
+            <span>
               <p>PREÇO TOTAL</p>
               <Input
                 name="total"
@@ -152,9 +151,9 @@ export default function NewInscription() {
                 type="text"
                 disabled
               />
-            </div>
+            </span>
           </footer>
-        </div>
+        </article>
       </Form>
     </Container>
   );

@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { MdDone } from 'react-icons/md';
 import PropTypes from 'prop-types';
-import {
-  format,
-  addMonths,
-  startOfDay,
-  startOfToday,
-  parseISO,
-} from 'date-fns';
+import { addMonths, startOfToday } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Form, Input, Select } from '@rocketseat/unform';
-import DatePicker from 'react-datepicker';
 import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
+import DatePicker from '~/components/DatePicker';
 import { formatPrice } from '~/util/format';
 import { Container } from './styles';
 import history from '~/services/history';
@@ -36,10 +30,8 @@ export default function EditInscription({ match }) {
   const dispatch = useDispatch();
 
   const [initialData, setInitialdata] = useState({});
-  const [studentsOptions] = useState([]);
   const [plansOptions, setPlansOptions] = useState([]);
   const [plans, setPlans] = useState([]);
-  const [total, setTotal] = useState('');
 
   async function loadData() {
     const [plansData, inscriptionData] = await Promise.all([
@@ -47,15 +39,12 @@ export default function EditInscription({ match }) {
       api.get(`inscriptions/${match.params.id}`),
     ]);
 
-    console.tron.log(inscriptionData);
-    console.tron.log(new Date(inscriptionData.data.start_date));
-
     setInitialdata({
       student: inscriptionData.data.student.name,
       plan_id: Number(inscriptionData.data.plan.id),
       start_date: new Date(inscriptionData.data.start_date),
       end_date: new Date(inscriptionData.data.end_date),
-      total: inscriptionData.data.price,
+      total: formatPrice(inscriptionData.data.price),
     });
 
     setPlans(plansData.data);
@@ -80,13 +69,14 @@ export default function EditInscription({ match }) {
       setInitialdata({
         ...initialData,
         end_date: addMonths(initialData.start_date, plan.duration),
-        total: setTotal(formatPrice(plan.price * plan.duration)),
+        total: formatPrice(plan.price * plan.duration),
       });
     }
   }, [initialData.plan_id, initialData.start_date]); //eslint-disable-line
 
   function handleSubmit(data) {
-    dispatch(updateInscriptionRequest(data));
+    const { id } = match.params;
+    dispatch(updateInscriptionRequest(id, data));
   }
 
   function handleGoBack() {
@@ -107,11 +97,11 @@ export default function EditInscription({ match }) {
               </SubmitButton>
             </aside>
           </header>
-          <div>
+          <article>
             <p>ALUNO</p>
             <Input placeholder="Buscar aluno" name="student" disabled />
             <footer>
-              <div>
+              <span>
                 <p>PLANO</p>
                 <Select
                   name="plan_id"
@@ -125,22 +115,21 @@ export default function EditInscription({ match }) {
                     })
                   }
                 />
-              </div>
-              <div>
+              </span>
+              <span>
                 <p>DATA DE INÍCIO</p>
-                <Input
+                <DatePicker
                   name="start_date"
                   type="date"
-                  defaultValue={new Date(initialData.start_date)}
-                  onChange={e =>
-                    setInitialdata({
-                      ...initialData,
-                      start_date: startOfDay(new Date(e.target.value)),
-                    })
+                  locale={pt}
+                  dateFormat="P"
+                  selected={initialData.start_date}
+                  onChange={date =>
+                    setInitialdata({ ...initialData, start_date: date })
                   }
                 />
-              </div>
-              <div>
+              </span>
+              <span>
                 <p>DATA DE TÉRMINO</p>
                 <DatePicker
                   name="end_date"
@@ -149,18 +138,18 @@ export default function EditInscription({ match }) {
                   selected={initialData.end_date}
                   disabled
                 />
-              </div>
-              <div>
+              </span>
+              <span>
                 <p>PREÇO TOTAL</p>
                 <Input
                   name="total"
-                  value={total || 'R$ 0,00'}
+                  value={initialData.total || 'R$ 0,00'}
                   type="text"
                   disabled
                 />
-              </div>
+              </span>
             </footer>
-          </div>
+          </article>
         </Form>
       )}
     </Container>

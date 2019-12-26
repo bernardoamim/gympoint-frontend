@@ -66,15 +66,25 @@ export default function NewStudent() {
           <footer>
             <div>
               <p>IDADE</p>
-              <Input name="age" type="number" placeholder="" />
+              <Input name="age" type="number" placeholder="Sua idade" />
             </div>
             <div>
               <p>PESO (em Kg) </p>
-              <Input name="weight" type="number" placeholder="" step="0.1" />
+              <Input
+                name="weight"
+                type="number"
+                placeholder="Seu peso Ex. (65.5)"
+                step="0.1"
+              />
             </div>
             <div>
               <p>ALTURA</p>
-              <Input name="height" type="number" placeholder="" step="0.01" />
+              <Input
+                name="height"
+                type="number"
+                placeholder="Sua altura Ex.(1.85)"
+                step="0.01"
+              />
             </div>
           </footer>
         </div>
