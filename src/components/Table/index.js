@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Container } from './styles';
 
-export default function Table({ template, countRowns, children }) {
-  return <Container>{children}</Container>;
+export default function Table({ template, countRowns, columns, children }) {
+  return <Container template={template}>{children}</Container>;
 }
 
 Table.propTypes = {
@@ -11,6 +11,7 @@ Table.propTypes = {
     .isRequired,
   template: PropTypes.string.isRequired,
   countRows: PropTypes.number,
+  columns: PropTypes.number.isRequired,
 };
 
 Table.defaultProps = {
