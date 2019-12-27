@@ -1,47 +1,58 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { MdAdd } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import history from '~/services/history';
 import { Container } from './styles';
 import SubmitButton from '~/components/Buttons/SubmitButton';
 import Table from '~/components/Table';
-import { updateSubjectRequest } from '~/store/modules/subject/actions';
 import SearchBar from '~/components/SearchBar';
+import Pagination from '~/components/Pagination';
 import api from '~/services/api';
+import { updateSubjectRequest } from '~/store/modules/subject/actions';
 
 export default function Students() {
+  const dispatch = useDispatch();
   const [students, setStudents] = useState([]);
+  const [name, setName] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
-  async function loadStudents() {
-    const response = await api.get('students');
-    // {
-    //   params: {
-    //     name,
-    //     page,
-    //   },
-    // });
+  async function loadStudents(page = 1) {
+    const response = await api.get('students', {
+      params: {
+        q: name,
+        page,
+      },
+    });
 
-    // setPage(response.data.page)
+    console.tron.log(response);
+    setCurrentPage(page);
     setStudents(response.data);
   }
 
   useEffect(() => {
+    dispatch(updateSubjectRequest('student'));
     loadStudents();
   }, []); //eslint-disable-line
 
+  useEffect(() => {
+    loadStudents();
+  }, [name]); //eslint-disable-line
+
   function handleEdit(id) {
-    history.push(`/student/edit/${id}`);
+    history.push(`/editStudent/${id}`);
   }
 
   async function handleDelete(student) {
+    // eslint-disable-next-line no-alert
     const ans = window.confirm(
       `Tem certeza que deseja deletar o aluno ${student.name}?`
     );
 
     if (ans) {
       try {
-        // await api.delete(`students/${student.id}`);
-        // loadStudents();
+        await api.delete(`students/${student.id}`);
+        loadStudents();
         toast.success('Aluno deletado com sucesso!');
       } catch (err) {
         toast.success('Aluno deletado com sucesso!');
@@ -58,7 +69,7 @@ export default function Students() {
             <MdAdd color="#fff" size={20} />
             <span>Cadastrar</span>
           </SubmitButton>
-          <SearchBar />
+          <SearchBar handleChange={e => setName(e.target.value)} />
         </aside>
       </header>
       <Table
@@ -103,6 +114,11 @@ export default function Students() {
           ))}
         </tbody>
       </Table>
+      <Pagination
+        currentPage={currentPage}
+        hasNextPage={students && students.length === 20}
+        handlePageChange={loadStudents}
+      />
     </Container>
   );
 }
