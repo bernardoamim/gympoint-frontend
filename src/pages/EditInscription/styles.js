@@ -48,11 +48,6 @@ export const Container = styled.div`
         line-height: 16px;
       }
 
-      svg {
-        background-color: #ccc;
-        color: #ccc;
-      }
-
       input,
       select {
         height: 44px;

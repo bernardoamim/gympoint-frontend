@@ -25,7 +25,6 @@ export default function Students() {
       },
     });
 
-    console.tron.log(response);
     setCurrentPage(page);
     setStudents(response.data);
   }

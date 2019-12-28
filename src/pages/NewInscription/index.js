@@ -6,6 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { Form, Input, Select } from '@rocketseat/unform';
 import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
+import ReactSelect from '~/components/ReactSelect';
 import DatePicker from '~/components/DatePicker';
 import { formatPrice } from '~/util/format';
 import { Container } from './styles';
@@ -35,10 +36,13 @@ export default function NewInscription() {
   const [studentsOptions, setStudentsOptions] = useState([]);
   const [plansOptions, setPlansOptions] = useState([]);
   const [plans, setPlans] = useState([]);
-  const [plan_id, setPlanId] = useState(null);
-  const [start_date, setStartDate] = useState(startOfToday());
-  const [end_date, setEndDate] = useState(new Date());
+  const [end_date, setEndDate] = useState(startOfToday());
   const [total, setTotal] = useState('');
+  const [inscription, setInscription] = useState({
+    student_id: null,
+    plan_id: null,
+    start_date: startOfToday(),
+  });
 
   useEffect(() => {
     dispatch(updateSubjectRequest('inscription'));
@@ -68,17 +72,15 @@ export default function NewInscription() {
   }, []); //eslint-disable-line
 
   useEffect(() => {
-    const plan = plans.find(p => p.id === plan_id);
+    const plan = plans.find(p => p.id === inscription.plan_id);
 
-    if (plan && start_date) {
-      setEndDate(addMonths(start_date, plan.duration));
+    if (plan) {
+      setEndDate(addMonths(inscription.start_date, plan.duration));
     }
-  }, [plan_id, start_date]); //eslint-disable-line
+  }, [inscription.plan_id, inscription.start_date]); //eslint-disable-line
 
-  function handleSubmit(data, { resetForm }) {
-    console.tron.log(data);
+  function handleSubmit(data) {
     dispatch(createInscriptionRequest(data));
-    resetForm();
   }
 
   function handleGoBack() {
@@ -86,11 +88,19 @@ export default function NewInscription() {
   }
 
   function handleOptionChange(e) {
-    if (e.target.name === 'plan_id') {
+    if (e.target && e.target.name === 'plan_id') {
       const plan = plans.find(p => p.id === Number(e.target.value));
-      setPlanId(Number(e.target.value));
+      setInscription({ ...inscription, plan_id: Number(e.target.value) });
       setTotal(formatPrice(plan.price * plan.duration));
+    } else {
+      setInscription({ ...inscription, student_id: e.id });
     }
+  }
+
+  async function filterStudents(inputValue) {
+    return studentsOptions.filter(i =>
+      i.title.toLowerCase().includes(inputValue.toLowerCase())
+    );
   }
 
   return (
@@ -108,10 +118,12 @@ export default function NewInscription() {
         </header>
         <article>
           <p>ALUNO</p>
-          <Select
+          <ReactSelect
             placeholder="Buscar aluno"
             name="student_id"
-            options={studentsOptions}
+            initialOptions={studentsOptions}
+            loadOptions={filterStudents}
+            onChange={e => setInscription({ ...inscription, student_id: e.id })}
           />
           <footer>
             <span>
@@ -129,8 +141,10 @@ export default function NewInscription() {
                 name="start_date"
                 locale={pt}
                 dateFormat="P"
-                selected={start_date}
-                onChange={date => setStartDate(date)}
+                selected={inscription.start_date}
+                onChange={date =>
+                  setInscription({ ...inscription, start_date: date })
+                }
               />
             </span>
             <span>

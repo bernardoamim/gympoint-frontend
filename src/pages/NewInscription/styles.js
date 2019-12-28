@@ -48,11 +48,6 @@ export const Container = styled.div`
         line-height: 16px;
       }
 
-      svg {
-        background-color: #ccc;
-        color: #ccc;
-      }
-
       input,
       select {
         height: 44px;
@@ -73,23 +68,14 @@ export const Container = styled.div`
         }
       }
 
-      option {
-        background: '#ccc';
-        height: 44px;
-
-        &:hover {
-          background: #ccc;
-        }
-      }
-
-      select,
+      /* select,
       [type='date']:not(:disabled),
       [type='date']:not(:disabled):hover {
         appearance: none;
         background-image: url(${MdKeyboardArrowDown});
         background-repeat: no-repeat;
         background-position: right 0.7em top 50%, 0 0;
-      }
+      } */
 
       [type='date']::-webkit-calendar-picker-indicator {
         opacity: 0;
