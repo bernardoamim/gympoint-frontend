@@ -16,7 +16,6 @@ export default function ReactSelect({
   const [inputName, setInputName] = useState('');
 
   function parseSelectValue(selectRef) {
-    console.log('function', selectRef);
     const selectValue = selectRef.select.state.value;
     return selectValue ? selectValue.id : '';
   }
@@ -29,7 +28,6 @@ export default function ReactSelect({
         path: 'props.select.select',
         parseValue: parseSelectValue,
         clearValue: selectRef => {
-          console.log('object', selectRef);
           selectRef.clearValue();
         },
       });

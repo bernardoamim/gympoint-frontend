@@ -3,7 +3,7 @@ import { MdDone } from 'react-icons/md';
 import { addMonths, startOfToday } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import 'react-datepicker/dist/react-datepicker.css';
-import { Form, Input, Select } from '@rocketseat/unform';
+import { Form, Input } from '@rocketseat/unform';
 import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import ReactSelect from '~/components/ReactSelect';
@@ -102,7 +102,17 @@ export default function NewInscription() {
   }
 
   async function filterStudents(inputValue) {
-    return studentsOptions.filter(i =>
+    const { data } = await api.get('students', {
+      params: {
+        q: inputValue,
+      },
+    });
+
+    return data.map(student => ({ id: student.id, title: student.name }));
+  }
+
+  async function filterPlans(inputValue) {
+    return plansOptions.filter(i =>
       i.title.toLowerCase().includes(inputValue.toLowerCase())
     );
   }
@@ -132,16 +142,10 @@ export default function NewInscription() {
           <footer>
             <span>
               <p>PLANO</p>
-              {/* <Select
-                name="plan_id"
-                options={plansOptions}
-                placeholder="Selecione o plano"
-                onChange={e => handleOptionChange(e)}
-              /> */}
-
               <ReactSelect
                 placeholder="Selecione o plano"
                 initialOptions={plansOptions}
+                loadOptions={filterPlans}
                 name="plan_id"
                 onChange={handleOptionChange}
               />
