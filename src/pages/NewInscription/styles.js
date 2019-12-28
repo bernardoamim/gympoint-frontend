@@ -68,15 +68,6 @@ export const Container = styled.div`
         }
       }
 
-      /* select,
-      [type='date']:not(:disabled),
-      [type='date']:not(:disabled):hover {
-        appearance: none;
-        background-image: url(${MdKeyboardArrowDown});
-        background-repeat: no-repeat;
-        background-position: right 0.7em top 50%, 0 0;
-      } */
-
       [type='date']::-webkit-calendar-picker-indicator {
         opacity: 0;
 

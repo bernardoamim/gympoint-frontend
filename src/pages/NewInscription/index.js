@@ -87,13 +87,17 @@ export default function NewInscription() {
     history.push('/inscriptions');
   }
 
-  function handleOptionChange(e) {
-    if (e.target && e.target.name === 'plan_id') {
-      const plan = plans.find(p => p.id === Number(e.target.value));
-      setInscription({ ...inscription, plan_id: Number(e.target.value) });
+  function handleOptionChange(option, name) {
+    if (!option || !name) return;
+
+    if (name === 'plan_id') {
+      const plan = plans.find(p => p.id === Number(option.id));
+      setInscription({ ...inscription, plan_id: Number(option.id) });
       setTotal(formatPrice(plan.price * plan.duration));
-    } else {
-      setInscription({ ...inscription, student_id: e.id });
+    }
+
+    if (name === 'student_id') {
+      setInscription({ ...inscription, student_id: option.id });
     }
   }
 
@@ -123,16 +127,23 @@ export default function NewInscription() {
             name="student_id"
             initialOptions={studentsOptions}
             loadOptions={filterStudents}
-            onChange={e => setInscription({ ...inscription, student_id: e.id })}
+            onChange={handleOptionChange}
           />
           <footer>
             <span>
               <p>PLANO</p>
-              <Select
+              {/* <Select
                 name="plan_id"
                 options={plansOptions}
                 placeholder="Selecione o plano"
                 onChange={e => handleOptionChange(e)}
+              /> */}
+
+              <ReactSelect
+                placeholder="Selecione o plano"
+                initialOptions={plansOptions}
+                name="plan_id"
+                onChange={handleOptionChange}
               />
             </span>
             <span>

@@ -8,6 +8,7 @@ export const selectStyles = {
   control: (styles, { menuIsOpen }) => ({
     ...styles,
     backgroundColor: 'white',
+    fontSize: '16px',
     border: menuIsOpen ? '2px solid #ccc' : '1px solid #ddd',
     boxShadow: menuIsOpen ? '#ccc' : '#ddd',
 
@@ -25,6 +26,7 @@ export const selectStyles = {
         : isFocused
         ? '#eee'
         : null,
+      fontSize: '16px',
       color: isSelected ? '#666' : '#999',
       cursor: isDisabled ? 'not-allowed' : 'default',
     };
@@ -33,12 +35,16 @@ export const selectStyles = {
     ...styles,
     color: '#999',
     margin: '0',
+    fontSize: '16px',
     height: '40px',
     padding: '0',
   }),
   placeholder: styles => ({
     ...styles,
     color: '#999',
+    fontSize: '16px',
+    paddingLeft: '4px',
+    width: 'fit-content',
     fontWeight: '300',
     margin: 'auto 0',
   }),
@@ -47,5 +53,11 @@ export const selectStyles = {
     color: '#999',
     margin: 'auto 0',
     fontWeight: '300',
+    paddingLeft: '4px',
+    width: 'fit-content',
+  }),
+  indicatorSeparator: styles => ({
+    ...styles,
+    display: 'none',
   }),
 };

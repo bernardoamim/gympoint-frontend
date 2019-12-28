@@ -47,11 +47,11 @@ export default function ReactSelect({
         getOptionLabel={option => option.title}
         cacheOptions
         inputValue={inputName}
-        defaultOptions={initialOptions}
+        defaultOptions={initialOptions || true}
         onInputChange={newValue => setInputName(newValue)}
         onChange={option => {
           setSelected(option.id);
-          onChange(option);
+          onChange(option, name);
         }}
         ref={ref}
         {...rest}
