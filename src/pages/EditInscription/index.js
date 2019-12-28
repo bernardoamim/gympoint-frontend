@@ -4,9 +4,10 @@ import PropTypes from 'prop-types';
 import { addMonths, startOfToday } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import 'react-datepicker/dist/react-datepicker.css';
-import { Form, Input, Select } from '@rocketseat/unform';
+import { Form, Input } from '@rocketseat/unform';
 import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
+import ReactSelect from '~/components/ReactSelect';
 import DatePicker from '~/components/DatePicker';
 import { formatPrice } from '~/util/format';
 import { Container } from './styles';
@@ -32,6 +33,8 @@ export default function EditInscription({ match }) {
   const [initialData, setInitialdata] = useState({});
   const [plansOptions, setPlansOptions] = useState([]);
   const [plans, setPlans] = useState([]);
+  const [total, setTotal] = useState('');
+  const [definedPlan, setDefinedPlan] = useState(null);
 
   async function loadData() {
     const [plansData, inscriptionData] = await Promise.all([
@@ -39,19 +42,23 @@ export default function EditInscription({ match }) {
       api.get(`inscriptions/${match.params.id}`),
     ]);
 
+    const { student, plan, start_date, end_date, price } = inscriptionData.data;
+
     setInitialdata({
-      student: inscriptionData.data.student.name,
-      plan_id: Number(inscriptionData.data.plan.id),
-      start_date: new Date(inscriptionData.data.start_date),
-      end_date: new Date(inscriptionData.data.end_date),
-      total: formatPrice(inscriptionData.data.price),
+      student: student.name,
+      plan_id: Number(plan.id),
+      start_date: new Date(start_date),
+      end_date: new Date(end_date),
     });
+
+    setTotal(formatPrice(price));
+    setDefinedPlan({ id: plan.id, title: plan.title });
 
     setPlans(plansData.data);
     setPlansOptions(
-      plansData.data.map(plan => ({
-        id: plan.id,
-        title: plan.title,
+      plansData.data.map(p => ({
+        id: p.id,
+        title: p.title,
       }))
     );
   }
@@ -69,8 +76,9 @@ export default function EditInscription({ match }) {
       setInitialdata({
         ...initialData,
         end_date: addMonths(initialData.start_date, plan.duration),
-        total: formatPrice(plan.price * plan.duration),
       });
+
+      setTotal(formatPrice(plan.price * plan.duration));
     }
   }, [initialData.plan_id, initialData.start_date]); //eslint-disable-line
 
@@ -83,12 +91,18 @@ export default function EditInscription({ match }) {
     history.push('/inscriptions');
   }
 
+  async function filterPlans(inputValue) {
+    return plansOptions.filter(i =>
+      i.title.toLowerCase().includes(inputValue.toLowerCase())
+    );
+  }
+
   return (
     <Container>
-      {initialData && plansOptions && (
+      {initialData && plansOptions && definedPlan && (
         <Form schema={schema} initialData={initialData} onSubmit={handleSubmit}>
           <header>
-            <strong>Cadastro de matrícula</strong>
+            <strong>Edição de matrícula</strong>
             <aside>
               <BackButton clickFunc={handleGoBack} />
               <SubmitButton type="submit">
@@ -103,16 +117,15 @@ export default function EditInscription({ match }) {
             <footer>
               <span>
                 <p>PLANO</p>
-                <Select
-                  name="plan_id"
-                  options={plansOptions}
-                  value={initialData.plan_id}
+                <ReactSelect
                   placeholder="Selecione o plano"
-                  onChange={e =>
-                    setInitialdata({
-                      ...initialData,
-                      plan_id: Number(e.target.value),
-                    })
+                  initialOptions={plansOptions}
+                  loadOptions={filterPlans}
+                  defaultValue={definedPlan}
+                  definedPlan={definedPlan}
+                  name="plan_id"
+                  onChange={option =>
+                    setInitialdata({ ...initialData, plan_id: option.id })
                   }
                 />
               </span>
@@ -143,8 +156,8 @@ export default function EditInscription({ match }) {
                 <p>PREÇO TOTAL</p>
                 <Input
                   name="total"
-                  value={initialData.total || 'R$ 0,00'}
-                  type="text"
+                  placeholder={`${initialData.total}`}
+                  value={total}
                   disabled
                 />
               </span>

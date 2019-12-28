@@ -11,9 +11,11 @@ export default function ReactSelect({
   ...rest
 }) {
   const ref = useRef(null);
-  const { fieldName, registerField, error } = useField(name);
+  const { fieldName, defaultValue, registerField, error } = useField(name);
   const [selected, setSelected] = useState('');
-  const [inputName, setInputName] = useState('');
+  const [inputName, setInputName] = useState(
+    defaultValue && defaultValue.title
+  );
 
   function parseSelectValue(selectRef) {
     const selectValue = selectRef.select.state.value;
@@ -25,14 +27,14 @@ export default function ReactSelect({
       registerField({
         name: fieldName,
         ref: ref.current,
-        path: 'props.select.select',
+        path: 'props.select',
         parseValue: parseSelectValue,
         clearValue: selectRef => {
-          selectRef.clearValue();
+          selectRef.clear();
         },
       });
     }
-  }, [ref.current]); // eslint-disable-line
+  }, [ref.current, fieldName]); // eslint-disable-line
 
   return (
     <>
@@ -62,10 +64,9 @@ export default function ReactSelect({
 
 ReactSelect.propTypes = {
   name: PropTypes.string.isRequired,
-
   initialOptions: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.number.isRequired,
+      id: PropTypes.number,
       title: PropTypes.string,
     })
   ),
