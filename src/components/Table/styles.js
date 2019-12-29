@@ -28,7 +28,7 @@ export const Container = styled.table`
 
       &.centerHead {
         text-align: center;
-        padding-left: 0;
+        /* padding-left: 0; */
       }
     }
   }
@@ -59,6 +59,9 @@ export const Container = styled.table`
 
     &.alignRight {
       text-align: right;
+      width: 100%;
+      padding-right: 0;
+      padding-left: 0;
     }
 
     &:last-of-type {

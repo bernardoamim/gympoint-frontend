@@ -15,7 +15,6 @@ import { formatPrice } from '~/util/format';
 export default function Plans() {
   const dispatch = useDispatch();
   const [plans, setPlans] = useState([]);
-  const [name, setName] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
   async function loadPlans(page = 1) {
@@ -63,7 +62,7 @@ export default function Plans() {
       }
     }
   }
-  console.tron.log(plans);
+
   return (
     <Container>
       <header>
@@ -75,7 +74,7 @@ export default function Plans() {
           </SubmitButton>
         </aside>
       </header>
-      <Table template="4fr 4fr 2fr 1.5fr 0.5fr" columns={5}>
+      <Table template="4fr 3fr 3fr 0.5fr 0.75fr" columns={5}>
         <thead>
           <tr>
             <th>TÍTULO</th>
@@ -115,7 +114,7 @@ export default function Plans() {
       </Table>
       <Pagination
         currentPage={currentPage}
-        hasNextPage={plans && plans.length === 20}
+        hasNextPage={plans && plans.length >= 20}
         handlePageChange={loadPlans}
       />
     </Container>

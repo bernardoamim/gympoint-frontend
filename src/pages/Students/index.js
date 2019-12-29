@@ -72,7 +72,7 @@ export default function Students() {
         </aside>
       </header>
       <Table
-        template="4fr 4fr 2fr 1.5fr 0.5fr"
+        template="4fr 4fr 2fr 1fr 0.75fr"
         countRowns={students.length}
         columns={5}
       >
@@ -115,7 +115,7 @@ export default function Students() {
       </Table>
       <Pagination
         currentPage={currentPage}
-        hasNextPage={students && students.length === 20}
+        hasNextPage={students && students.length >= 20}
         handlePageChange={loadStudents}
       />
     </Container>
