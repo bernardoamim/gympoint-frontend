@@ -6,7 +6,7 @@ import pt from 'date-fns/locale/pt-BR';
 import { toast } from 'react-toastify';
 import history from '~/services/history';
 import { Container } from './styles';
-import SubmitButton from '~/components/Buttons/SubmitButton';
+import { Button } from '~/components/Buttons/SubmitButton/styles';
 import Table from '~/components/Table';
 
 import Pagination from '~/components/Pagination';
@@ -75,10 +75,10 @@ export default function Inscriptions() {
       <header>
         <strong>Gerenciando matrículas</strong>
         <aside>
-          <SubmitButton>
+          <Button type="button" onClick={() => history.push('/newInscription')}>
             <MdAdd color="#fff" size={20} />
             <span>Cadastrar</span>
-          </SubmitButton>
+          </Button>
         </aside>
       </header>
       <Table template="2fr 1fr 2fr 2fr 1fr 0.5fr 0.5fr" columns={7}>

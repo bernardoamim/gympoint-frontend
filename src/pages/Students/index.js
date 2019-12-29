@@ -4,7 +4,7 @@ import { MdAdd } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import history from '~/services/history';
 import { Container } from './styles';
-import SubmitButton from '~/components/Buttons/SubmitButton';
+import { Button } from '~/components/Buttons/SubmitButton/styles';
 import Table from '~/components/Table';
 import SearchBar from '~/components/SearchBar';
 import Pagination from '~/components/Pagination';
@@ -64,10 +64,10 @@ export default function Students() {
       <header>
         <strong>Gerenciando alunos</strong>
         <aside>
-          <SubmitButton>
+          <Button type="button" onClick={() => history.push('/newStudent')}>
             <MdAdd color="#fff" size={20} />
             <span>Cadastrar</span>
-          </SubmitButton>
+          </Button>
           <SearchBar handleChange={e => setName(e.target.value)} />
         </aside>
       </header>
