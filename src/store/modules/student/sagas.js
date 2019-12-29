@@ -12,8 +12,6 @@ export function* createStudent({ payload }) {
   try {
     const student = payload.data;
 
-    console.tron.log(student);
-
     const response = yield call(api.post, 'students', student);
 
     toast.success('Aluno criado com sucesso!');
@@ -29,8 +27,6 @@ export function* createStudent({ payload }) {
 export function* updateStudent({ payload }) {
   try {
     const student = payload.data;
-
-    console.tron.log(student);
 
     const response = yield call(api.put, `students/${payload.id}`, student);
 

@@ -12,8 +12,6 @@ export function* createInscription({ payload }) {
   try {
     const inscription = payload.data;
 
-    console.tron.log(inscription);
-
     const response = yield call(api.post, 'inscriptions', inscription);
 
     toast.success('Matrícula criada com sucesso!');
@@ -29,8 +27,6 @@ export function* createInscription({ payload }) {
 export function* updateInscription({ payload }) {
   try {
     const inscription = payload.data;
-
-    console.tron.log(inscription);
 
     const response = yield call(
       api.put,

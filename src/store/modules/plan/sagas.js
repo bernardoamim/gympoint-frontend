@@ -12,8 +12,6 @@ export function* createPlan({ payload }) {
   try {
     const plan = payload.data;
 
-    console.tron.log(plan);
-
     const response = yield call(api.post, 'plans', plan);
 
     toast.success('Plano criado com sucesso!');
@@ -29,8 +27,6 @@ export function* createPlan({ payload }) {
 export function* updatePlan({ payload }) {
   try {
     const plan = payload.data;
-
-    console.tron.log(plan);
 
     const response = yield call(api.put, `plans/${payload.id}`, plan);
 
