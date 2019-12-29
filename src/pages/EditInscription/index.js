@@ -51,7 +51,7 @@ export default function EditInscription({ match }) {
       end_date: new Date(end_date),
     });
 
-    setTotal(formatPrice(price));
+    setTotal(price ? formatPrice(price) : 'R$ 0,00');
     setDefinedPlan({ id: plan.id, title: plan.title });
 
     setPlans(plansData.data);

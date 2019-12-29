@@ -1,8 +1,11 @@
 import React from 'react';
 import { Switch } from 'react-router-dom';
 import Route from '~/routes/Route';
+
 import SignIn from '~/pages/SignIn';
+
 import Students from '~/pages/Students';
+import Plans from '~/pages/Plans';
 
 import NewStudent from '~/pages/NewStudent';
 import NewPlan from '~/pages/NewPlan';
@@ -17,6 +20,7 @@ export default function Routes() {
     <Switch>
       <Route path="/" exact component={SignIn} />
       <Route path="/home" isPrivate component={Students} />
+      <Route path="/plans" isPrivate component={Plans} />
 
       {/* Creation Routes */}
       <Route path="/newStudent" isPrivate component={NewStudent} />
