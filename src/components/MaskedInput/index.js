@@ -41,7 +41,6 @@ export default function MaskedInput({ name, onChange, ...rest }) {
     value,
   };
 
-  console.tron.log(value);
   return (
     <>
       <InputMask

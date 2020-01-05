@@ -63,7 +63,7 @@ export default function Inscriptions() {
       try {
         await api.delete(`inscriptions/${inscription.id}`);
         loadInscriptions();
-        toast.success('matrícula deletada com sucesso!');
+        toast.success('Matrícula deletada com sucesso!');
       } catch (err) {
         toast.success('Ocorreu um erro ao deletar a matrícula!');
       }
