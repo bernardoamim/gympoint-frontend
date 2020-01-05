@@ -8,7 +8,6 @@ import history from '~/services/history';
 import { Container } from './styles';
 import { Button } from '~/components/Buttons/SubmitButton/styles';
 import Table from '~/components/Table';
-
 import Pagination from '~/components/Pagination';
 import api from '~/services/api';
 import { updateSubjectRequest } from '~/store/modules/subject/actions';

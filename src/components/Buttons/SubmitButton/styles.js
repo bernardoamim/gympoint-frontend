@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import { darken } from 'polished';
+import { darken, lighten } from 'polished';
 
 export const Button = styled.button`
-  background: #ee4d64;
+  background: ${props => (props.loading ? lighten(0.2, '#ee4d64') : '#ee4d64')};
   color: #fff;
   border: 0;
   border-radius: 4px;

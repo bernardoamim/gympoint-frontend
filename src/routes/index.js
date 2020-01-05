@@ -21,7 +21,7 @@ export default function Routes() {
   return (
     <Switch>
       <Route path="/" exact component={SignIn} />
-      <Route path="/students" isPrivate component={Students} />
+      <Route path="/home" isPrivate component={Students} />
       <Route path="/plans" isPrivate component={Plans} />
       <Route path="/inscriptions" isPrivate component={Inscriptions} />
       <Route path="/help-orders" isPrivate component={HelpOrders} />

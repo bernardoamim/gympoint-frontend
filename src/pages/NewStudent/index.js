@@ -1,14 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdDone } from 'react-icons/md';
 import { Form, Input } from '@rocketseat/unform';
 import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
+import { toast } from 'react-toastify';
+import api from '~/services/api';
 import { Container } from './styles';
 import history from '~/services/history';
+import MaskedInput from '~/components/MaskedInput';
 import BackButton from '~/components/Buttons/BackButton';
 import SubmitButton from '~/components/Buttons/SubmitButton';
 import { updateSubjectRequest } from '~/store/modules/subject/actions';
-import { createStudentRequest } from '~/store/modules/student/actions';
 
 const schema = Yup.object().shape({
   name: Yup.string().required('*Insira o nome do aluno'),
@@ -31,28 +33,68 @@ const schema = Yup.object().shape({
 
 export default function NewStudent() {
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+
+  const [student, setStudent] = useState({
+    age: '',
+    weight: '',
+    height: '',
+  });
 
   useEffect(() => {
     dispatch(updateSubjectRequest('student'));
   }, []); //eslint-disable-line
 
-  function handleSubmit(data, { resetForm }) {
-    dispatch(createStudentRequest(data));
-    resetForm();
+  async function handleSubmit(data) {
+    setLoading(true);
+
+    try {
+      await api.post('/students', data);
+
+      setLoading(false);
+      toast.success('Aluno cadastrado com sucesso.');
+    } catch (err) {
+      setLoading(false);
+
+      if (err.response && err.response.data) {
+        toast.error(err.response.data.error);
+      } else {
+        toast.error('Erro ao cadastrar aluno.');
+      }
+    }
+  }
+
+  function handleInputChange(e) {
+    switch (e.target.name) {
+      case 'weight':
+        setStudent({
+          ...student,
+          weight: Number(e.target.value.substring(0, 5)),
+        });
+        break;
+      case 'height':
+        setStudent({
+          ...student,
+          height: Number(e.target.value.substring(0, 4)),
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   function handleBack() {
     history.push('/students');
   }
-
+  console.tron.log(student);
   return (
     <Container>
-      <Form schema={schema} onSubmit={handleSubmit}>
+      <Form schema={schema} initialData={student} onSubmit={handleSubmit}>
         <header>
           <strong>Cadastro de aluno</strong>
           <aside>
             <BackButton clickFunc={handleBack} />
-            <SubmitButton>
+            <SubmitButton loading={loading}>
               <MdDone color="#fff" size={20} />
               <span>Salvar</span>
             </SubmitButton>
@@ -70,20 +112,22 @@ export default function NewStudent() {
             </div>
             <div>
               <p>PESO (em Kg) </p>
-              <Input
+              <MaskedInput
                 name="weight"
-                type="number"
-                placeholder="Seu peso Ex. (65.5)"
-                step="0.1"
+                type="text"
+                mask="999.9"
+                onChange={handleInputChange}
+                placeholder="000.0kg"
               />
             </div>
             <div>
               <p>ALTURA</p>
-              <Input
+              <MaskedInput
                 name="height"
-                type="number"
-                placeholder="Sua altura Ex.(1.85)"
-                step="0.01"
+                type="text"
+                mask="9.99"
+                onChange={handleInputChange}
+                placeholder="0.00m"
               />
             </div>
           </footer>
