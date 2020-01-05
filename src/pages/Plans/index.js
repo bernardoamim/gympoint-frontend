@@ -49,7 +49,7 @@ export default function Plans() {
   async function handleDelete(plan) {
     // eslint-disable-next-line no-alert
     const ans = window.confirm(
-      `Tem certeza que deseja deletar o aluno ${plan.title}?`
+      `Tem certeza que deseja deletar o plano ${plan.title}?`
     );
 
     if (ans) {
