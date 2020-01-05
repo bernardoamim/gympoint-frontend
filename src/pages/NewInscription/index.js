@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { MdDone } from 'react-icons/md';
-import { addMonths, startOfDay, startOfToday } from 'date-fns';
+import { addMonths, startOfToday, startOfDay } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import 'react-datepicker/dist/react-datepicker.css';
-import { Form, Input, Select } from '@rocketseat/unform';
-import DatePicker from 'react-datepicker';
+import { toast } from 'react-toastify';
+import { Form, Input } from '@rocketseat/unform';
 import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
+import api from '~/services/api';
+import ReactSelect from '~/components/ReactSelect';
+import DatePicker from '~/components/DatePicker';
 import { formatPrice } from '~/util/format';
 import { Container } from './styles';
 import history from '~/services/history';
 import BackButton from '~/components/Buttons/BackButton';
 import SubmitButton from '~/components/Buttons/SubmitButton';
 import { updateSubjectRequest } from '~/store/modules/subject/actions';
-import { createInscriptionRequest } from '~/store/modules/inscription/actions';
-import api from '~/services/api';
+// import { createInscriptionRequest } from '~/store/modules/inscription/actions';
 
 const schema = Yup.object().shape({
   student_id: Yup.number()
@@ -31,14 +33,18 @@ const schema = Yup.object().shape({
 
 export default function NewInscription() {
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const [studentsOptions, setStudentsOptions] = useState([]);
   const [plansOptions, setPlansOptions] = useState([]);
   const [plans, setPlans] = useState([]);
-  const [plan_id, setPlanId] = useState(null);
-  const [start_date, setStartDate] = useState(startOfToday());
-  const [end_date, setEndDate] = useState(new Date());
+  const [end_date, setEndDate] = useState(startOfToday());
   const [total, setTotal] = useState('');
+  const [inscription, setInscription] = useState({
+    student_id: null,
+    plan_id: null,
+    start_date: startOfToday(),
+  });
 
   useEffect(() => {
     dispatch(updateSubjectRequest('inscription'));
@@ -68,32 +74,64 @@ export default function NewInscription() {
   }, []); //eslint-disable-line
 
   useEffect(() => {
-    const plan = plans.find(p => p.id === plan_id);
+    const plan = plans.find(p => p.id === inscription.plan_id);
 
-    if (plan && start_date) {
-      setEndDate(addMonths(start_date, plan.duration));
+    if (plan) {
+      setEndDate(addMonths(inscription.start_date, plan.duration));
     }
-  }, [plan_id, start_date]); //eslint-disable-line
+  }, [inscription.plan_id, inscription.start_date]); //eslint-disable-line
 
-  function handleSubmit(data, { resetForm }) {
-    dispatch(createInscriptionRequest(data));
-    resetForm();
-  }
+  async function handleSubmit(data) {
+    setLoading(true);
 
-  function handleStartDate(e) {
-    setStartDate(startOfDay(new Date(e.target.value)));
+    try {
+      await api.post('/inscriptions', data);
+
+      setLoading(false);
+      toast.success('Matrícula cadastrada com sucesso.');
+    } catch (err) {
+      setLoading(false);
+
+      if (err.response && err.response.data) {
+        toast.error(err.response.data.error);
+      } else {
+        toast.error('Erro ao cadastrar matrícula.');
+      }
+    }
   }
 
   function handleGoBack() {
     history.push('/inscriptions');
   }
 
-  function handleOptionChange(e) {
-    if (e.target.name === 'plan_id') {
-      const plan = plans.find(p => p.id === Number(e.target.value));
-      setPlanId(Number(e.target.value));
+  function handleOptionChange(option, name) {
+    if (!option || !name) return;
+
+    if (name === 'plan_id') {
+      const plan = plans.find(p => p.id === Number(option.id));
+      setInscription({ ...inscription, plan_id: Number(option.id) });
       setTotal(formatPrice(plan.price * plan.duration));
     }
+
+    if (name === 'student_id') {
+      setInscription({ ...inscription, student_id: option.id });
+    }
+  }
+
+  async function filterStudents(inputValue) {
+    const { data } = await api.get('students', {
+      params: {
+        q: inputValue,
+      },
+    });
+
+    return data.map(student => ({ id: student.id, title: student.name }));
+  }
+
+  async function filterPlans(inputValue) {
+    return plansOptions.filter(i =>
+      i.title.toLowerCase().includes(inputValue.toLowerCase())
+    );
   }
 
   return (
@@ -103,38 +141,48 @@ export default function NewInscription() {
           <strong>Cadastro de matrícula</strong>
           <aside>
             <BackButton clickFunc={handleGoBack} />
-            <SubmitButton type="submit">
+            <SubmitButton loading={loading}>
               <MdDone color="#fff" size={20} />
               <span>Salvar</span>
             </SubmitButton>
           </aside>
         </header>
-        <div>
+        <article>
           <p>ALUNO</p>
-          <Select
+          <ReactSelect
             placeholder="Buscar aluno"
             name="student_id"
-            options={studentsOptions}
+            initialOptions={studentsOptions}
+            loadOptions={filterStudents}
+            onChange={handleOptionChange}
           />
           <footer>
-            <div>
+            <span>
               <p>PLANO</p>
-              <Select
-                name="plan_id"
-                options={plansOptions}
+              <ReactSelect
                 placeholder="Selecione o plano"
-                onChange={e => handleOptionChange(e)}
+                initialOptions={plansOptions}
+                loadOptions={filterPlans}
+                name="plan_id"
+                onChange={handleOptionChange}
               />
-            </div>
-            <div>
+            </span>
+            <span>
               <p>DATA DE INÍCIO</p>
-              <Input
+              <DatePicker
                 name="start_date"
-                type="date"
-                onChange={e => handleStartDate(e)}
+                locale={pt}
+                dateFormat="P"
+                selected={inscription.start_date}
+                onChange={date =>
+                  setInscription({
+                    ...inscription,
+                    start_date: startOfDay(date),
+                  })
+                }
               />
-            </div>
-            <div>
+            </span>
+            <span>
               <p>DATA DE TÉRMINO</p>
               <DatePicker
                 name="end_date"
@@ -143,8 +191,8 @@ export default function NewInscription() {
                 selected={end_date}
                 disabled
               />
-            </div>
-            <div>
+            </span>
+            <span>
               <p>PREÇO TOTAL</p>
               <Input
                 name="total"
@@ -152,9 +200,9 @@ export default function NewInscription() {
                 type="text"
                 disabled
               />
-            </div>
+            </span>
           </footer>
-        </div>
+        </article>
       </Form>
     </Container>
   );

@@ -6,55 +6,59 @@ import history from '~/services/history';
 import { Container } from './styles';
 import { Button } from '~/components/Buttons/SubmitButton/styles';
 import Table from '~/components/Table';
-import SearchBar from '~/components/SearchBar';
+
 import Pagination from '~/components/Pagination';
 import api from '~/services/api';
 import { updateSubjectRequest } from '~/store/modules/subject/actions';
+import { formatPrice } from '~/util/format';
 
-export default function Students() {
+export default function Plans() {
   const dispatch = useDispatch();
-  const [students, setStudents] = useState([]);
-  const [name, setName] = useState('');
+  const [plans, setPlans] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
-  async function loadStudents(page = 1) {
-    const response = await api.get('students', {
+  async function loadPlans(page = 1) {
+    const response = await api.get('plans', {
       params: {
-        q: name,
         page,
       },
     });
 
     setCurrentPage(page);
-    setStudents(response.data);
+    setPlans(
+      response.data.map(plan => ({
+        ...plan,
+        price: formatPrice(plan.price),
+        duration:
+          plan.duration === 1
+            ? `${plan.duration} mês`
+            : `${plan.duration} meses`,
+      }))
+    );
   }
 
   useEffect(() => {
-    dispatch(updateSubjectRequest('student'));
-    loadStudents();
+    dispatch(updateSubjectRequest('plan'));
+    loadPlans();
   }, []); //eslint-disable-line
 
-  useEffect(() => {
-    loadStudents();
-  }, [name]); //eslint-disable-line
-
   function handleEdit(id) {
-    history.push(`/editStudent/${id}`);
+    history.push(`/editPlan/${id}`);
   }
 
-  async function handleDelete(student) {
+  async function handleDelete(plan) {
     // eslint-disable-next-line no-alert
     const ans = window.confirm(
-      `Tem certeza que deseja deletar o aluno ${student.name}?`
+      `Tem certeza que deseja deletar o aluno ${plan.title}?`
     );
 
     if (ans) {
       try {
-        await api.delete(`students/${student.id}`);
-        loadStudents();
-        toast.success('Aluno deletado com sucesso!');
+        await api.delete(`plans/${plan.id}`);
+        loadPlans();
+        toast.success('Plano deletado com sucesso!');
       } catch (err) {
-        toast.error('Ocorreu um erro ao deletar o aluno!');
+        toast.success('Ocorreu um erro ao deletar o plano!');
       }
     }
   }
@@ -62,39 +66,34 @@ export default function Students() {
   return (
     <Container>
       <header>
-        <strong>Gerenciando alunos</strong>
+        <strong>Gerenciando planos</strong>
         <aside>
-          <Button type="button" onClick={() => history.push('/newStudent')}>
+          <Button type="button" onClick={() => history.push('/newPlan')}>
             <MdAdd color="#fff" size={20} />
             <span>Cadastrar</span>
           </Button>
-          <SearchBar handleChange={e => setName(e.target.value)} />
         </aside>
       </header>
-      <Table
-        template="4fr 4fr 2fr 1fr 0.75fr"
-        countRowns={students.length}
-        columns={5}
-      >
+      <Table template="4fr 3fr 3fr 0.5fr 0.75fr" columns={5}>
         <thead>
           <tr>
-            <th>NOME</th>
-            <th>E-MAIL</th>
-            <th className="centerHead">IDADE</th>
+            <th>TÍTULO</th>
+            <th className="centerHead">DURAÇÃO</th>
+            <th className="centerHead">VALOR p/ MÊS</th>
             <th> </th>
             <th> </th>
           </tr>
         </thead>
         <tbody>
-          {students.map(student => (
-            <tr key={String(student.id)}>
-              <td>{student.name}</td>
-              <td>{student.email}</td>
-              <td className="centerData">{student.age}</td>
+          {plans.map(plan => (
+            <tr key={String(plan.id)}>
+              <td>{plan.title}</td>
+              <td className="centerData">{plan.duration}</td>
+              <td className="centerData">{plan.price}</td>
               <td className="alignRight">
                 <button
                   type="button"
-                  onClick={() => handleEdit(student.id)}
+                  onClick={() => handleEdit(plan.id)}
                   className="editBtn"
                 >
                   editar
@@ -103,7 +102,7 @@ export default function Students() {
               <td className="alignRight">
                 <button
                   type="button"
-                  onClick={() => handleDelete(student)}
+                  onClick={() => handleDelete(plan)}
                   className="deleteBtn"
                 >
                   apagar
@@ -115,8 +114,8 @@ export default function Students() {
       </Table>
       <Pagination
         currentPage={currentPage}
-        hasNextPage={students && students.length >= 20}
-        handlePageChange={loadStudents}
+        hasNextPage={plans && plans.length >= 20}
+        handlePageChange={loadPlans}
       />
     </Container>
   );

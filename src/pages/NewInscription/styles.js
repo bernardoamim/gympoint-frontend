@@ -30,7 +30,7 @@ export const Container = styled.div`
       }
     }
 
-    div {
+    article {
       display: flex;
       flex-direction: column;
       padding: 20px;
@@ -46,11 +46,6 @@ export const Container = styled.div`
         font-weight: 500;
         padding: 0 1px 10px;
         line-height: 16px;
-      }
-
-      svg {
-        background-color: #ccc;
-        color: #ccc;
       }
 
       input,
@@ -73,24 +68,6 @@ export const Container = styled.div`
         }
       }
 
-      option {
-        background: '#ccc';
-        height: 44px;
-
-        &:hover {
-          background: #ccc;
-        }
-      }
-
-      select,
-      [type='date']:not(:disabled),
-      [type='date']:not(:disabled):hover {
-        appearance: none;
-        background-image: url(${MdKeyboardArrowDown});
-        background-repeat: no-repeat;
-        background-position: right 0.7em top 50%, 0 0;
-      }
-
       [type='date']::-webkit-calendar-picker-indicator {
         opacity: 0;
 
@@ -101,20 +78,6 @@ export const Container = styled.div`
 
       [type='date']::-webkit-inner-spin-button {
         display: none;
-      }
-
-      .react-datepicker-wrapper {
-        width: 100%;
-        padding: 0;
-        margin: 0;
-
-        div:first-child {
-          padding: 0;
-        }
-
-        &:read-only {
-          background-color: #f5f5f5;
-        }
       }
 
       span {
@@ -129,16 +92,47 @@ export const Container = styled.div`
         padding: 0;
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
 
-        > div {
-          flex-direction: column;
-          width: 25%;
-          padding: 0;
+        > span {
+          flex: 1;
+          margin: 0;
+          width: 100%;
 
-          &:not(:last-of-type) {
+          &:not(:last-child) {
             padding-right: 15px;
           }
+
+          > select {
+            padding: 0 15px;
+            width: 100%;
+          }
+
+          > input:disabled {
+            padding: 0 15px;
+            width: 100%;
+          }
+
+          div {
+            > div {
+              > input {
+                width: 100%;
+                padding: 0 15px;
+              }
+            }
+          }
+
+          input {
+            &:not(:disabled) {
+              appearance: none;
+              background-image: url(${MdKeyboardArrowDown});
+              background-repeat: no-repeat;
+              background-position: right 0.7em top 50%, 0 0;
+            }
+          }
+        }
+
+        .react-datepicker-wrapper {
+          z-index: 10;
         }
       }
     }

@@ -3,12 +3,14 @@ import { MdDone } from 'react-icons/md';
 import { Form, Input } from '@rocketseat/unform';
 import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
+import { toast } from 'react-toastify';
+import api from '~/services/api';
 import { Container } from './styles';
+import { formatPrice } from '~/util/format';
 import history from '~/services/history';
 import BackButton from '~/components/Buttons/BackButton';
 import SubmitButton from '~/components/Buttons/SubmitButton';
 import { updateSubjectRequest } from '~/store/modules/subject/actions';
-import { createPlanRequest } from '~/store/modules/plan/actions';
 
 const schema = Yup.object().shape({
   title: Yup.string().required('*Insira o nome do plano'),
@@ -24,7 +26,8 @@ const schema = Yup.object().shape({
 
 export default function NewPlan() {
   const dispatch = useDispatch();
-  const [price, setPrice] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [price, setPrice] = useState('');
   const [duration, setDuration] = useState(0);
   const [total, setTotal] = useState(0);
 
@@ -32,9 +35,25 @@ export default function NewPlan() {
     dispatch(updateSubjectRequest('plan'));
   }, []); //eslint-disable-line
 
-  function handleSubmit(data, { resetForm }) {
-    dispatch(createPlanRequest(data));
-    resetForm();
+  async function handleSubmit(data, { resetForm }) {
+    setLoading(true);
+
+    try {
+      await api.post('/plans', data);
+
+      setLoading(false);
+      toast.success('Plano cadastrado com sucesso.');
+      resetForm();
+    } catch (err) {
+      setLoading(false);
+      resetForm();
+
+      if (err.response && err.response.data) {
+        toast.error(err.response.data.error);
+      } else {
+        toast.error('Erro ao cadastrar plano.');
+      }
+    }
   }
 
   function handleBack() {
@@ -42,7 +61,7 @@ export default function NewPlan() {
   }
 
   useMemo(() => {
-    setTotal(price * duration);
+    setTotal(formatPrice(price * duration));
   }, [price, duration]);
 
   return (
@@ -52,7 +71,7 @@ export default function NewPlan() {
           <strong>Cadastro de plano</strong>
           <aside>
             <BackButton clickFunc={handleBack} />
-            <SubmitButton>
+            <SubmitButton loading={loading}>
               <MdDone color="#fff" size={20} />
               <span>Salvar</span>
             </SubmitButton>
@@ -60,7 +79,7 @@ export default function NewPlan() {
         </header>
         <div>
           <p>TÍTULO DO PLANO</p>
-          <Input name="title" type="text" placeholder="" />
+          <Input name="title" type="text" placeholder="Título do plano" />
           <footer>
             <div>
               <p>DURAÇÃO (em meses)</p>
@@ -69,7 +88,7 @@ export default function NewPlan() {
                 value={duration}
                 onChange={e => setDuration(e.target.value)}
                 type="number"
-                placeholder=""
+                placeholder="0"
               />
             </div>
             <div>
@@ -79,7 +98,7 @@ export default function NewPlan() {
                 value={price}
                 onChange={e => setPrice(e.target.value)}
                 type="number"
-                placeholder=""
+                placeholder="R$ 0,00"
                 step="0.01"
               />
             </div>
@@ -87,10 +106,10 @@ export default function NewPlan() {
               <p>PREÇO TOTAL</p>
               <Input
                 name="total"
-                value={total}
-                type="number"
-                readOnly
+                value={total || 'R$ 0,00'}
+                type="text"
                 disabled
+                readOnly
               />
             </div>
           </footer>

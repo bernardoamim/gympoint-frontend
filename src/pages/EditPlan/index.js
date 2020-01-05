@@ -3,14 +3,15 @@ import { MdDone } from 'react-icons/md';
 import PropTypes from 'prop-types';
 import { Form, Input } from '@rocketseat/unform';
 import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import * as Yup from 'yup';
+import { formatPrice } from '~/util/format';
 import api from '~/services/api';
 import { Container } from './styles';
 import history from '~/services/history';
 import BackButton from '~/components/Buttons/BackButton';
 import SubmitButton from '~/components/Buttons/SubmitButton';
 import { updateSubjectRequest } from '~/store/modules/subject/actions';
-import { updatePlanRequest } from '~/store/modules/plan/actions';
 
 const schema = Yup.object().shape({
   title: Yup.string().required('*Insira o nome do plano'),
@@ -26,7 +27,7 @@ const schema = Yup.object().shape({
 
 export default function EditPlan({ match }) {
   const dispatch = useDispatch();
-
+  const [loading, setLoading] = useState(false);
   const [plan, setPlan] = useState({});
   const [total, setTotal] = useState(0);
 
@@ -43,8 +44,23 @@ export default function EditPlan({ match }) {
     loadPlan();
   }, []); //eslint-disable-line
 
-  function handleSubmit(data) {
-    dispatch(updatePlanRequest(plan.id, data));
+  async function handleSubmit(data) {
+    setLoading(true);
+
+    try {
+      await api.put(`/plans/${plan.id}`, data);
+
+      setLoading(false);
+      toast.success('Dados salvos com sucesso.');
+    } catch (err) {
+      setLoading(false);
+
+      if (err.response && err.response.data) {
+        toast.error(err.response.data.error);
+      } else {
+        toast.error('Erro ao alterar plano.');
+      }
+    }
   }
 
   function handleBack() {
@@ -53,7 +69,7 @@ export default function EditPlan({ match }) {
 
   useMemo(() => {
     if (plan.price && plan.duration) {
-      setTotal(plan.price * plan.duration);
+      setTotal(formatPrice(plan.price * plan.duration));
     }
   }, [plan.price, plan.duration]);
 
@@ -64,7 +80,7 @@ export default function EditPlan({ match }) {
           <strong>Edição de plano</strong>
           <aside>
             <BackButton clickFunc={handleBack} />
-            <SubmitButton>
+            <SubmitButton loading={loading}>
               <MdDone color="#fff" size={20} />
               <span>Salvar</span>
             </SubmitButton>
@@ -88,17 +104,15 @@ export default function EditPlan({ match }) {
               <Input
                 name="price"
                 onChange={e => setPlan({ ...plan, price: e.target.value })}
-                type="number"
-                placeholder=""
-                step="0.01"
+                type="text"
               />
             </div>
             <div>
               <p>PREÇO TOTAL</p>
               <Input
                 name="total"
-                value={total}
-                type="number"
+                value={total || 'R$ 0,00'}
+                type="text"
                 readOnly
                 disabled
               />

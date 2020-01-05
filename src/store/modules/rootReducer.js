@@ -2,14 +2,10 @@ import { combineReducers } from 'redux';
 
 import auth from './auth/reducer';
 import subject from './subject/reducer';
-import student from './student/reducer';
-import plan from './plan/reducer';
-import inscription from './inscription/reducer';
+import page from './page/reducer';
 
 export default combineReducers({
   auth,
   subject,
-  student,
-  plan,
-  inscription,
+  page,
 });

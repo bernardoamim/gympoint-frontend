@@ -16,7 +16,6 @@ export default function Header() {
   const dispatch = useDispatch();
   const user = useSelector(state => state.auth.user);
   const subject = useSelector(state => state.subject.subject);
-  console.tron.log(subject);
   function handleSignOut() {
     dispatch(signOut());
   }
@@ -51,7 +50,7 @@ export default function Header() {
           </NavLinkElm>
           <NavLinkElm
             active={subject === 'order' ? 'true' : undefined}
-            to="/orders"
+            to="/help-orders"
           >
             PEDIDOS DE AUXÍLIO
           </NavLinkElm>
