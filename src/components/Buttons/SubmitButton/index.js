@@ -5,7 +5,7 @@ import { Button } from './styles';
 export default function SubmitButton({ loading, children }) {
   return (
     <Button loading={loading} type="submit">
-      {loading ? <span>Salvando...</span> : children}
+      {loading ? <span>Salvando</span> : children}
     </Button>
   );
 }

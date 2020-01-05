@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MdDone } from 'react-icons/md';
+import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
 import { Form, Input } from '@rocketseat/unform';
 import { useDispatch } from 'react-redux';
@@ -7,10 +8,10 @@ import * as Yup from 'yup';
 import api from '~/services/api';
 import { Container } from './styles';
 import history from '~/services/history';
+import MaskedInput from '~/components/MaskedInput';
 import BackButton from '~/components/Buttons/BackButton';
 import SubmitButton from '~/components/Buttons/SubmitButton';
 import { updateSubjectRequest } from '~/store/modules/subject/actions';
-import { updateStudentRequest } from '~/store/modules/student/actions';
 
 const schema = Yup.object().shape({
   name: Yup.string().required('*Insira o nome do aluno'),
@@ -33,6 +34,7 @@ const schema = Yup.object().shape({
 
 export default function EditStudent({ match }) {
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
   const [student, setStudent] = useState({});
 
   async function loadStudent() {
@@ -48,12 +50,27 @@ export default function EditStudent({ match }) {
     loadStudent();
   }, []); //eslint-disable-line
 
-  function handleSubmit(data) {
-    dispatch(updateStudentRequest(student.id, data));
+  async function handleSubmit(data) {
+    setLoading(true);
+
+    try {
+      await api.put(`/students/${student.id}`, data);
+
+      setLoading(false);
+      toast.success('Dados salvos com sucesso.');
+    } catch (err) {
+      setLoading(false);
+
+      if (err.response && err.response.data) {
+        toast.error(err.response.data.error);
+      } else {
+        toast.error('Erro ao editar aluno.');
+      }
+    }
   }
 
   function handleBack() {
-    history.push('/students');
+    history.push('/home');
   }
 
   return (
@@ -63,7 +80,7 @@ export default function EditStudent({ match }) {
           <strong>Edição de aluno</strong>
           <aside>
             <BackButton clickFunc={handleBack} />
-            <SubmitButton>
+            <SubmitButton loading={loading}>
               <MdDone color="#fff" size={20} />
               <span>Salvar</span>
             </SubmitButton>
@@ -81,11 +98,33 @@ export default function EditStudent({ match }) {
             </div>
             <div>
               <p>PESO (em Kg) </p>
-              <Input name="weight" type="number" placeholder="" step="0.1" />
+              <MaskedInput
+                name="weight"
+                type="text"
+                mask="999.9"
+                onChange={value =>
+                  setStudent({
+                    ...student,
+                    weight: Number(value.substring(0, 5)),
+                  })
+                }
+              />
+              {/* <Input name="weight" type="number" placeholder="" step="0.1" /> */}
             </div>
             <div>
               <p>ALTURA</p>
-              <Input name="height" type="number" placeholder="" step="0.01" />
+              <MaskedInput
+                name="height"
+                type="text"
+                mask="9.99"
+                onChange={value =>
+                  setStudent({
+                    ...student,
+                    height: Number(value.substring(0, 4)),
+                  })
+                }
+              />
+              {/* <Input name="height" type="number" placeholder="" step="0.01" /> */}
             </div>
           </footer>
         </div>

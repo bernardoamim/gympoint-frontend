@@ -6,7 +6,19 @@ import { useField } from '@rocketseat/unform';
 export default function MaskedInput({ name, onChange, ...rest }) {
   const ref = useRef();
   const { fieldName, registerField, defaultValue, error } = useField(name);
-  const [value, setValue] = useState(defaultValue);
+  const [value, setValue] = useState('');
+
+  useEffect(() => {
+    if (defaultValue) {
+      const parsed = defaultValue.toLocaleString('pt-BR', {
+        minimumIntegerDigits: fieldName === 'weight' ? 3 : 1,
+        maximumIntegerDigits: fieldName === 'weight' ? 3 : 1,
+        minimumFractionDigits: fieldName === 'weight' ? 1 : 2,
+        maximumFractionDigits: fieldName === 'weight' ? 1 : 2,
+      });
+      setValue(parsed);
+    }
+  }, [defaultValue, fieldName]); // eslint-disable-line
 
   useEffect(() => {
     if (ref.current) {
@@ -29,13 +41,14 @@ export default function MaskedInput({ name, onChange, ...rest }) {
     value,
   };
 
+  console.tron.log(value);
   return (
     <>
       <InputMask
         {...props}
         onChange={e => {
           setValue(e.target.value);
-          onChange(e);
+          onChange(e.target.value);
         }}
       />
       {error && <span>{error}</span>}

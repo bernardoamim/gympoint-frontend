@@ -64,29 +64,10 @@ export default function NewStudent() {
     }
   }
 
-  function handleInputChange(e) {
-    switch (e.target.name) {
-      case 'weight':
-        setStudent({
-          ...student,
-          weight: Number(e.target.value.substring(0, 5)),
-        });
-        break;
-      case 'height':
-        setStudent({
-          ...student,
-          height: Number(e.target.value.substring(0, 4)),
-        });
-        break;
-      default:
-        break;
-    }
+  function handleBack() {
+    history.push('/home');
   }
 
-  function handleBack() {
-    history.push('/students');
-  }
-  console.tron.log(student);
   return (
     <Container>
       <Form schema={schema} initialData={student} onSubmit={handleSubmit}>
@@ -116,7 +97,12 @@ export default function NewStudent() {
                 name="weight"
                 type="text"
                 mask="999.9"
-                onChange={handleInputChange}
+                onChange={value =>
+                  setStudent({
+                    ...student,
+                    weight: Number(value.substring(0, 5)),
+                  })
+                }
                 placeholder="000.0kg"
               />
             </div>
@@ -126,7 +112,12 @@ export default function NewStudent() {
                 name="height"
                 type="text"
                 mask="9.99"
-                onChange={handleInputChange}
+                onChange={value =>
+                  setStudent({
+                    ...student,
+                    height: Number(value.substring(0, 4)),
+                  })
+                }
                 placeholder="0.00m"
               />
             </div>
