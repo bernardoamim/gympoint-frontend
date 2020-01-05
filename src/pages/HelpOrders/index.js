@@ -31,7 +31,7 @@ export default function HelpOrders() {
     });
 
     setCurrentPage(page);
-    setOrders(response.data);
+    setOrders(response.data.helpOrders);
   }
 
   useEffect(() => {

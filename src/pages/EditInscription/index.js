@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { MdDone } from 'react-icons/md';
 import PropTypes from 'prop-types';
-import { addMonths, startOfToday } from 'date-fns';
+import { addMonths, startOfToday, startOfDay } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Form, Input } from '@rocketseat/unform';
 import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import * as Yup from 'yup';
+import api from '~/services/api';
 import ReactSelect from '~/components/ReactSelect';
 import DatePicker from '~/components/DatePicker';
 import { formatPrice } from '~/util/format';
@@ -15,8 +17,6 @@ import history from '~/services/history';
 import BackButton from '~/components/Buttons/BackButton';
 import SubmitButton from '~/components/Buttons/SubmitButton';
 import { updateSubjectRequest } from '~/store/modules/subject/actions';
-import { updateInscriptionRequest } from '~/store/modules/inscription/actions';
-import api from '~/services/api';
 
 const schema = Yup.object().shape({
   plan_id: Yup.number()
@@ -29,6 +29,7 @@ const schema = Yup.object().shape({
 
 export default function EditInscription({ match }) {
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const [initialData, setInitialdata] = useState({});
   const [plansOptions, setPlansOptions] = useState([]);
@@ -82,9 +83,24 @@ export default function EditInscription({ match }) {
     }
   }, [initialData.plan_id, initialData.start_date]); //eslint-disable-line
 
-  function handleSubmit(data) {
+  async function handleSubmit(data) {
     const { id } = match.params;
-    dispatch(updateInscriptionRequest(id, data));
+    setLoading(true);
+
+    try {
+      await api.put(`/inscriptions/${id}`, data);
+
+      setLoading(false);
+      toast.success('Matrícula alterada com sucesso.');
+    } catch (err) {
+      setLoading(false);
+
+      if (err.response && err.response.data) {
+        toast.error(err.response.data.error);
+      } else {
+        toast.error('Erro ao alterar matrícula.');
+      }
+    }
   }
 
   function handleGoBack() {
@@ -105,7 +121,7 @@ export default function EditInscription({ match }) {
             <strong>Edição de matrícula</strong>
             <aside>
               <BackButton clickFunc={handleGoBack} />
-              <SubmitButton type="submit">
+              <SubmitButton loading={loading}>
                 <MdDone color="#fff" size={20} />
                 <span>Salvar</span>
               </SubmitButton>
@@ -138,7 +154,10 @@ export default function EditInscription({ match }) {
                   dateFormat="P"
                   selected={initialData.start_date}
                   onChange={date =>
-                    setInitialdata({ ...initialData, start_date: date })
+                    setInitialdata({
+                      ...initialData,
+                      start_date: startOfDay(date),
+                    })
                   }
                 />
               </span>

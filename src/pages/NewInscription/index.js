@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { MdDone } from 'react-icons/md';
-import { addMonths, startOfToday } from 'date-fns';
+import { addMonths, startOfToday, startOfDay } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import 'react-datepicker/dist/react-datepicker.css';
+import { toast } from 'react-toastify';
 import { Form, Input } from '@rocketseat/unform';
 import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
+import api from '~/services/api';
 import ReactSelect from '~/components/ReactSelect';
 import DatePicker from '~/components/DatePicker';
 import { formatPrice } from '~/util/format';
@@ -14,8 +16,7 @@ import history from '~/services/history';
 import BackButton from '~/components/Buttons/BackButton';
 import SubmitButton from '~/components/Buttons/SubmitButton';
 import { updateSubjectRequest } from '~/store/modules/subject/actions';
-import { createInscriptionRequest } from '~/store/modules/inscription/actions';
-import api from '~/services/api';
+// import { createInscriptionRequest } from '~/store/modules/inscription/actions';
 
 const schema = Yup.object().shape({
   student_id: Yup.number()
@@ -32,6 +33,7 @@ const schema = Yup.object().shape({
 
 export default function NewInscription() {
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const [studentsOptions, setStudentsOptions] = useState([]);
   const [plansOptions, setPlansOptions] = useState([]);
@@ -79,8 +81,23 @@ export default function NewInscription() {
     }
   }, [inscription.plan_id, inscription.start_date]); //eslint-disable-line
 
-  function handleSubmit(data) {
-    dispatch(createInscriptionRequest(data));
+  async function handleSubmit(data) {
+    setLoading(true);
+
+    try {
+      await api.post('/inscriptions', data);
+
+      setLoading(false);
+      toast.success('Matrícula cadastrada com sucesso.');
+    } catch (err) {
+      setLoading(false);
+
+      if (err.response && err.response.data) {
+        toast.error(err.response.data.error);
+      } else {
+        toast.error('Erro ao cadastrar matrícula.');
+      }
+    }
   }
 
   function handleGoBack() {
@@ -124,7 +141,7 @@ export default function NewInscription() {
           <strong>Cadastro de matrícula</strong>
           <aside>
             <BackButton clickFunc={handleGoBack} />
-            <SubmitButton>
+            <SubmitButton loading={loading}>
               <MdDone color="#fff" size={20} />
               <span>Salvar</span>
             </SubmitButton>
@@ -158,7 +175,10 @@ export default function NewInscription() {
                 dateFormat="P"
                 selected={inscription.start_date}
                 onChange={date =>
-                  setInscription({ ...inscription, start_date: date })
+                  setInscription({
+                    ...inscription,
+                    start_date: startOfDay(date),
+                  })
                 }
               />
             </span>
